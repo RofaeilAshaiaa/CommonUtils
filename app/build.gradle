@@ -3,6 +3,10 @@ plugins {
     id 'kotlin-android'
 }
 
+def keystorePropertiesFile = rootProject.file("azure-configs.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdk 31
 
@@ -48,7 +52,7 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':common-utils')
+    implementation 'com.example:commonutils-release:0.1.0'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.4.0'
@@ -62,4 +66,15 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+}
+
+repositories {
+    maven {
+        name = 'azure'
+        url keystoreProperties['repositoryUrl']
+        credentials {
+            username keystoreProperties['userName']
+            password keystoreProperties['azureMavenAccessToken']
+        }
+    }
 }
